@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120" width="600" height="120">
+  <!-- Triflouze Wordmark -->
+
+  <!-- Icon (scaled down 90x90, centered vertically in 120px) -->
+  <g transform="translate(15, 15) scale(0.175)">
+    <rect x="0" y="0" width="512" height="512" rx="112" ry="112" fill="#6B9E7A"/>
+    <rect x="80" y="100" width="352" height="80" rx="40" fill="white"/>
+    <rect x="216" y="140" width="80" height="272" rx="36" fill="white"/>
+    <line x1="120" y1="180" x2="120" y2="228" stroke="white" stroke-width="11" stroke-linecap="round"/>
+    <line x1="392" y1="180" x2="392" y2="228" stroke="white" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="120" cy="276" r="48" fill="#E8B86D"/>
+    <circle cx="120" cy="276" r="34" fill="none" stroke="white" stroke-width="5"/>
+    <circle cx="392" cy="276" r="48" fill="#E8B86D"/>
+    <circle cx="392" cy="276" r="34" fill="none" stroke="white" stroke-width="5"/>
+  </g>
+
+  <!-- "Triflouze" text -->
+  <text x="115" y="75"
+    font-family="Nunito, Helvetica Neue, Helvetica, Arial, sans-serif"
+    font-size="56"
+    font-weight="800"
+    fill="#6B9E7A"
+    letter-spacing="-1">Triflouze</text>
+
+  <!-- Tagline -->
+  <text x="116" y="98"
+    font-family="Nunito, Helvetica Neue, Helvetica, Arial, sans-serif"
+    font-size="16"
+    font-weight="400"
+    fill="#7A6555"
+    letter-spacing="0.5">Gérez vos dépenses en famille</text>
+</svg>
