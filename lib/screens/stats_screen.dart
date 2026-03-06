@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../theme/triflouze_theme.dart';
@@ -49,16 +50,17 @@ class _StatsScreenState extends State<StatsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final data = _byCategory;
 
     return Scaffold(
       backgroundColor: TriflouzeTheme.surface,
       appBar: AppBar(
-        title: const Text('Statistiques'),
+        title: Text(l10n.statisticsTitle),
       ),
       body: data.isEmpty
           ? Center(
-              child: Text('Aucune dépense pour cette période',
+              child: Text(l10n.noExpensesForPeriod,
                   style: GoogleFonts.nunito(color: TriflouzeTheme.textMedium)),
             )
           : SingleChildScrollView(
@@ -66,11 +68,11 @@ class _StatsScreenState extends State<StatsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(),
+                  _buildHeader(l10n),
                   const SizedBox(height: 24),
                   _buildDonut(data),
                   const SizedBox(height: 32),
-                  _buildSectionTitle('Répartition par catégorie'),
+                  _buildSectionTitle(l10n.categoryBreakdown),
                   const SizedBox(height: 12),
                   ..._buildCategoryCards(data),
                 ],
@@ -81,7 +83,7 @@ class _StatsScreenState extends State<StatsScreen> {
 
   // ── En-tête ───────────────────────────────────────────────────────────────────
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -102,7 +104,7 @@ class _StatsScreenState extends State<StatsScreen> {
                 color: TriflouzeTheme.textDark),
           ),
           Text(
-            '${widget.expenses.length} dépense${widget.expenses.length > 1 ? 's' : ''}',
+            l10n.expenseCount(widget.expenses.length),
             style: GoogleFonts.nunito(
                 fontSize: 13,
                 color: TriflouzeTheme.textMedium,
@@ -163,7 +165,6 @@ class _StatsScreenState extends State<StatsScreen> {
               centerSpaceRadius: 72,
             ),
           ),
-          // Label central
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: touchedEntry != null
@@ -187,7 +188,7 @@ class _StatsScreenState extends State<StatsScreen> {
         key: key,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('Total',
+          Text(AppLocalizations.of(context)!.totalLabel,
               style: GoogleFonts.nunito(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

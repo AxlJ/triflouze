@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../services/auth_service.dart';
@@ -43,10 +45,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final FirestoreService _fs;
 
-  // Cached categories for use in callbacks (kept in sync by StreamBuilder)
   List<Category> _latestCategories = [];
-
-  // IDs en cours de suppression (masque l'item immédiatement après confirmation)
   final Set<String> _deletingIds = {};
 
   final Map<String, double> toEuroRates = {
@@ -58,7 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Color> get chartColors => TriflouzeTheme.chartColors;
 
   int? touchedIndex;
-  String selectedPeriod = 'Ce jour';
+
+  // Internal period keys — locale-independent
+  static const _kAll = 'all';
+  static const _kToday = 'today';
+  static const _kWeek = 'week';
+  static const _kMonth = 'month';
+  static const _kYear = 'year';
+
+  String selectedPeriod = _kToday;
   String? selectedCategoryFilter;
   String? selectedMemberFilter;
   int _periodOffset = 0;
@@ -67,7 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _fs = FirestoreService(widget.groupId);
-    // Corrige le displayName en Firestore si l'email avait été stocké à la place
     final displayName = widget.user.displayName ?? '';
     if (displayName.isNotEmpty) {
       _fs.ensureMemberDisplayName(widget.user.uid, displayName);
@@ -75,25 +81,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool get _supportsNavigation =>
-      selectedPeriod == 'Ce jour' ||
-      selectedPeriod == 'Cette semaine' ||
-      selectedPeriod == 'Ce mois' ||
-      selectedPeriod == 'Cette année';
+      selectedPeriod == _kToday ||
+      selectedPeriod == _kWeek ||
+      selectedPeriod == _kMonth ||
+      selectedPeriod == _kYear;
 
   DateTime get _referenceDate {
     final now = DateTime.now();
-    if (selectedPeriod == 'Ce jour') {
+    if (selectedPeriod == _kToday) {
       return DateTime(now.year, now.month, now.day - _periodOffset);
-    } else if (selectedPeriod == 'Cette semaine') {
+    } else if (selectedPeriod == _kWeek) {
       final monday = now.subtract(Duration(days: now.weekday - 1));
       return DateTime(
         monday.year,
         monday.month,
         monday.day - _periodOffset * 7,
       );
-    } else if (selectedPeriod == 'Ce mois') {
+    } else if (selectedPeriod == _kMonth) {
       return DateTime(now.year, now.month - _periodOffset);
-    } else if (selectedPeriod == 'Cette année') {
+    } else if (selectedPeriod == _kYear) {
       return DateTime(now.year - _periodOffset);
     }
     return now;
@@ -108,18 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
     final ref = _referenceDate;
     return expenses.where((e) {
       bool matchesPeriod;
-      if (selectedPeriod == 'Ce jour') {
+      if (selectedPeriod == _kToday) {
         matchesPeriod =
             e.date.year == ref.year &&
             e.date.month == ref.month &&
             e.date.day == ref.day;
-      } else if (selectedPeriod == 'Cette semaine') {
+      } else if (selectedPeriod == _kWeek) {
         final end = ref.add(const Duration(days: 7));
         matchesPeriod = !e.date.isBefore(ref) && e.date.isBefore(end);
-      } else if (selectedPeriod == 'Ce mois') {
+      } else if (selectedPeriod == _kMonth) {
         matchesPeriod =
             e.date.year == ref.year && e.date.month == ref.month;
-      } else if (selectedPeriod == 'Cette année') {
+      } else if (selectedPeriod == _kYear) {
         matchesPeriod = e.date.year == ref.year;
       } else {
         matchesPeriod = true;
@@ -173,14 +179,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _addForMember(String name) => _fs.addForMember(name);
-
   Future<void> _deleteForMember(String name) => _fs.deleteForMember(name);
-
   Future<void> _deleteCategory(String id) => _fs.deleteCategory(id);
 
   Future<void> _addCategory(String name, String icon) async {
     final id = _fs.generateCategoryId();
-    // New categories appear before 'Autre' (order 9999)
     final order = _latestCategories
         .where((c) => c.name != 'Autre')
         .length;
@@ -190,50 +193,57 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ── Date labels (using intl for locale-aware formatting) ─────────────────────
+
   String _dayLabel(DateTime d) {
-    const monthNames = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-    ];
-    return '${d.day} ${monthNames[d.month - 1]} ${d.year}';
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat('d MMMM yyyy', locale).format(d);
   }
 
   String _monthLabel(DateTime d) {
-    const monthNames = [
-      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
-    ];
-    return '${monthNames[d.month - 1]} ${d.year}';
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final s = DateFormat('MMMM yyyy', locale).format(d);
+    return '${s[0].toUpperCase()}${s.substring(1)}';
   }
 
   String _weekLabel(DateTime monday) {
-    const monthNames = [
-      'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-      'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc',
-    ];
+    final locale = Localizations.localeOf(context).toLanguageTag();
     final sunday = monday.add(const Duration(days: 6));
+    final dfShort = DateFormat('d MMM', locale);
     if (monday.month == sunday.month) {
-      return '${monday.day}–${sunday.day} ${monthNames[sunday.month - 1]} ${sunday.year}';
+      final monthYear = DateFormat('MMM yyyy', locale).format(sunday);
+      return '${monday.day}–${sunday.day} $monthYear';
     }
-    return '${monday.day} ${monthNames[monday.month - 1]} – '
-        '${sunday.day} ${monthNames[sunday.month - 1]} ${sunday.year}';
+    return '${dfShort.format(monday)} – ${dfShort.format(sunday)} ${sunday.year}';
   }
 
-  String get periodLabel {
+  String _periodName(AppLocalizations l10n) {
+    switch (selectedPeriod) {
+      case _kAll: return l10n.filterAll;
+      case _kToday: return l10n.filterToday;
+      case _kWeek: return l10n.filterThisWeek;
+      case _kMonth: return l10n.filterThisMonth;
+      case _kYear: return l10n.filterThisYear;
+      default: return selectedPeriod;
+    }
+  }
+
+  String periodLabel(AppLocalizations l10n) {
     if (_periodOffset > 0) {
       final ref = _referenceDate;
-      if (selectedPeriod == 'Ce jour') return _dayLabel(ref);
-      if (selectedPeriod == 'Cette semaine') return _weekLabel(ref);
-      if (selectedPeriod == 'Ce mois') return _monthLabel(ref);
-      if (selectedPeriod == 'Cette année') return ref.year.toString();
+      if (selectedPeriod == _kToday) return _dayLabel(ref);
+      if (selectedPeriod == _kWeek) return _weekLabel(ref);
+      if (selectedPeriod == _kMonth) return _monthLabel(ref);
+      if (selectedPeriod == _kYear) return ref.year.toString();
     }
-    return selectedPeriod;
+    return _periodName(l10n);
   }
 
   Widget _buildMiniPieChart(
     Map<String, double> data,
     double totalInEuros,
     List<Expense> filtered,
+    AppLocalizations l10n,
   ) {
     if (data.isEmpty) return const SizedBox.shrink();
     final entries = data.entries.toList();
@@ -245,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context) => StatsScreen(
             expenses: filtered,
             toEuroRates: toEuroRates,
-            periodLabel: periodLabel,
+            periodLabel: periodLabel(l10n),
             categories: _latestCategories,
           ),
         ),
@@ -361,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Voir le détail',
+                l10n.viewDetails,
                 style: TextStyle(
                     fontSize: 12,
                     color: TriflouzeTheme.primary,
@@ -378,14 +388,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final currentUserName =
-        widget.user.displayName ?? widget.user.email ?? 'Utilisateur';
+        widget.user.displayName ?? widget.user.email ?? l10n.user;
 
     return StreamBuilder<List<Category>>(
       stream: _fs.watchCategories(),
       builder: (context, catSnap) {
         final categories = catSnap.data ?? [];
-        _latestCategories = categories; // keep cached for callbacks
+        _latestCategories = categories;
 
         return StreamBuilder<List<Expense>>(
           stream: _fs.watchExpenses(),
@@ -418,7 +429,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.settings_outlined),
-                    tooltip: 'Paramètres groupes',
+                    tooltip: l10n.settingsTooltip,
                     onPressed: () async {
                       final primaryGroupId = await UserService()
                           .getPrimaryGroupId(widget.user.uid);
@@ -438,68 +449,71 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.group_add),
-                    tooltip: 'Inviter',
+                    tooltip: l10n.inviteTooltip,
                     onPressed: () => showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Inviter quelqu\'un'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text(
-                              'Partage ce code pour rejoindre le groupe :',
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                            const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 12,
+                      builder: (context) {
+                        final dl10n = AppLocalizations.of(context)!;
+                        return AlertDialog(
+                          title: Text(dl10n.inviteDialogTitle),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                dl10n.inviteDialogSubtitle,
+                                style: const TextStyle(color: Colors.black54),
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.blue.shade200),
-                              ),
-                              child: Text(
-                                widget.groupCode,
-                                style: const TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 6,
+                              const SizedBox(height: 16),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.blue.shade50,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.blue.shade200),
+                                ),
+                                child: Text(
+                                  widget.groupCode,
+                                  style: const TextStyle(
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 6,
+                                  ),
                                 ),
                               ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton.icon(
+                              icon: const Icon(Icons.copy, size: 18),
+                              label: Text(dl10n.copyButton),
+                              onPressed: () {
+                                Clipboard.setData(
+                                  ClipboardData(text: widget.groupCode),
+                                );
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(dl10n.codeCopied),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(dl10n.close),
                             ),
                           ],
-                        ),
-                        actions: [
-                          TextButton.icon(
-                            icon: const Icon(Icons.copy, size: 18),
-                            label: const Text('Copier'),
-                            onPressed: () {
-                              Clipboard.setData(
-                                ClipboardData(text: widget.groupCode),
-                              );
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Code copié !'),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('Fermer'),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.logout),
-                    tooltip: 'Se déconnecter',
+                    tooltip: l10n.logoutTooltip,
                     onPressed: () => AuthService().signOut(),
                   ),
                 ],
@@ -512,9 +526,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: TriflouzeTheme.primary.withValues(alpha: 0.08),
                     child: Column(
                       children: [
-                        const Text(
-                          'Total des dépenses (en €)',
-                          style: TextStyle(fontSize: 14),
+                        Text(
+                          l10n.totalExpenses,
+                          style: const TextStyle(fontSize: 14),
                         ),
                         Text(
                           '${totalInEuros.toStringAsFixed(2)} €',
@@ -539,7 +553,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                periodLabel,
+                                periodLabel(l10n),
                                 style: const TextStyle(
                                   fontSize: 13,
                                   color: Colors.black54,
@@ -564,14 +578,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           )
                         else
                           Text(
-                            periodLabel,
+                            periodLabel(l10n),
                             style: const TextStyle(
                               fontSize: 13,
                               color: Colors.black54,
                             ),
                           ),
                         const SizedBox(height: 12),
-                        _buildMiniPieChart(byCategory, totalInEuros, filtered),
+                        _buildMiniPieChart(byCategory, totalInEuros, filtered, l10n),
                       ],
                     ),
                   ),
@@ -583,15 +597,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          ...['Toujours', 'Ce jour', 'Cette semaine', 'Ce mois', 'Cette année']
-                              .map(
+                          ...([
+                            (_kAll,   l10n.filterAll),
+                            (_kToday, l10n.filterToday),
+                            (_kWeek,  l10n.filterThisWeek),
+                            (_kMonth, l10n.filterThisMonth),
+                            (_kYear,  l10n.filterThisYear),
+                          ]).map(
                             (p) => Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: ChoiceChip(
-                                label: Text(p),
-                                selected: selectedPeriod == p,
+                                label: Text(p.$2),
+                                selected: selectedPeriod == p.$1,
                                 onSelected: (_) => setState(() {
-                                  selectedPeriod = p;
+                                  selectedPeriod = p.$1;
                                   _periodOffset = 0;
                                 }),
                               ),
@@ -602,7 +621,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  // Filtres bénéficiaires (tous les membres persistés du groupe)
+                  // Filtres bénéficiaires
                   Builder(builder: (context) {
                     final allForMembers = ([...widget.forMembers]..sort());
                     if (allForMembers.length <= 1) return const SizedBox.shrink();
@@ -615,7 +634,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: ChoiceChip(
-                                label: const Text('Tous'),
+                                label: Text(l10n.filterAllMembers),
                                 selected: selectedMemberFilter == null,
                                 onSelected: (_) => setState(
                                   () => selectedMemberFilter = null,
@@ -629,31 +648,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onLongPress: () async {
                                     final confirm = await showDialog<bool>(
                                       context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: const Text(
-                                          'Supprimer le bénéficiaire',
-                                        ),
-                                        content: Text(
-                                          'Voulez-vous supprimer "$m" de la liste ?',
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, false),
-                                            child: const Text('Annuler'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, true),
-                                            child: const Text(
-                                              'Supprimer',
-                                              style: TextStyle(
-                                                color: Colors.red,
+                                      builder: (context) {
+                                        final dl10n = AppLocalizations.of(context)!;
+                                        return AlertDialog(
+                                          title: Text(dl10n.deleteBeneficiaryTitle),
+                                          content: Text(dl10n.deleteBeneficiaryConfirm(m)),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: Text(dl10n.cancel),
+                                            ),
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: Text(
+                                                dl10n.delete,
+                                                style: const TextStyle(color: Colors.red),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        );
+                                      },
                                     );
                                     if (confirm == true) {
                                       if (selectedMemberFilter == m) {
@@ -691,7 +707,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: ChoiceChip(
-                              label: const Text('Toutes'),
+                              label: Text(l10n.filterAllCategories),
                               selected: selectedCategoryFilter == null,
                               onSelected: (_) => setState(
                                 () => selectedCategoryFilter = null,
@@ -719,10 +735,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   Expanded(
                     child: filtered.isEmpty
-                        ? const Center(
+                        ? Center(
                             child: Text(
-                              'Aucune dépense pour cette période',
-                              style: TextStyle(color: Colors.grey),
+                              l10n.noExpensesForPeriod,
+                              style: const TextStyle(color: Colors.grey),
                             ),
                           )
                         : ListView.builder(

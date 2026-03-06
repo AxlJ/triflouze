@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/category.dart';
 import '../services/auth_service.dart';
 
@@ -43,6 +44,7 @@ class _GroupScreenState extends State<GroupScreen> {
   }
 
   Future<void> _createGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final name = _groupNameController.text.trim();
     if (name.isEmpty) return;
 
@@ -56,7 +58,7 @@ class _GroupScreenState extends State<GroupScreen> {
       final code = _generateCode();
       final groupRef = db.collection('groups').doc();
       final user = widget.user;
-      final displayName = user.displayName ?? user.email ?? 'Utilisateur';
+      final displayName = user.displayName ?? user.email ?? l10n.user;
 
       final batch = db.batch();
 
@@ -80,7 +82,6 @@ class _GroupScreenState extends State<GroupScreen> {
       for (var i = 0; i < _defaultCategories.length; i++) {
         final cat = _defaultCategories[i];
         final catRef = groupRef.collection('categories').doc(cat.id);
-        // Seed 'Autre' at a high order so custom categories appear before it
         final order = cat.name == 'Autre' ? 9999 : i;
         batch.set(catRef, {
           'id': cat.id,
@@ -92,13 +93,14 @@ class _GroupScreenState extends State<GroupScreen> {
 
       await batch.commit();
     } catch (e) {
-      setState(() => _error = 'Erreur lors de la création : $e');
+      if (mounted) setState(() => _error = l10n.errorGroupCreation(e.toString()));
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _joinGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final code = _groupCodeController.text.trim().toUpperCase();
     if (code.isEmpty) return;
 
@@ -116,13 +118,13 @@ class _GroupScreenState extends State<GroupScreen> {
           .get();
 
       if (snap.docs.isEmpty) {
-        setState(() => _error = 'Code invalide. Vérifiez et réessayez.');
+        if (mounted) setState(() => _error = l10n.errorInvalidCode);
         return;
       }
 
       final groupRef = snap.docs.first.reference;
       final user = widget.user;
-      final displayName = user.displayName ?? user.email ?? 'Utilisateur';
+      final displayName = user.displayName ?? user.email ?? l10n.user;
 
       await groupRef.update({
         'members': FieldValue.arrayUnion([
@@ -136,9 +138,9 @@ class _GroupScreenState extends State<GroupScreen> {
         'forMembers': FieldValue.arrayUnion([displayName]),
       });
     } catch (e) {
-      setState(() => _error = 'Erreur lors de la jonction : $e');
+      if (mounted) setState(() => _error = l10n.errorGroupJoin(e.toString()));
     } finally {
-      setState(() => _loading = false);
+      if (mounted) setState(() => _loading = false);
     }
   }
 
@@ -151,14 +153,15 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mon groupe'),
+        title: Text(l10n.myGroupTitle),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Se déconnecter',
+            tooltip: l10n.logoutTooltip,
             onPressed: () => AuthService().signOut(),
           ),
         ],
@@ -170,18 +173,18 @@ class _GroupScreenState extends State<GroupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'Bienvenue !',
-                    style: TextStyle(
+                  Text(
+                    l10n.welcomeTitle,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Créez un groupe ou rejoignez-en un existant.',
-                    style: TextStyle(color: Colors.black54),
+                  Text(
+                    l10n.welcomeSubtitle,
+                    style: const TextStyle(color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
                   if (_error != null) ...[
@@ -193,9 +196,9 @@ class _GroupScreenState extends State<GroupScreen> {
                     ),
                   ],
                   const SizedBox(height: 40),
-                  const Text(
-                    'Créer un groupe',
-                    style: TextStyle(
+                  Text(
+                    l10n.createGroupTitle,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -203,26 +206,26 @@ class _GroupScreenState extends State<GroupScreen> {
                   const SizedBox(height: 12),
                   TextField(
                     controller: _groupNameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Nom du groupe',
-                      border: OutlineInputBorder(),
-                      hintText: 'Ex : Famille Dupont',
+                    decoration: InputDecoration(
+                      labelText: l10n.groupNameLabel,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.groupNameHint,
                     ),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: _createGroup,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Créer', style: TextStyle(fontSize: 16)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(l10n.createButton, style: const TextStyle(fontSize: 16)),
                     ),
                   ),
                   const SizedBox(height: 40),
                   const Divider(),
                   const SizedBox(height: 24),
-                  const Text(
-                    'Rejoindre un groupe',
-                    style: TextStyle(
+                  Text(
+                    l10n.joinGroupTitle,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -231,20 +234,20 @@ class _GroupScreenState extends State<GroupScreen> {
                   TextField(
                     controller: _groupCodeController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(
-                      labelText: 'Code à 6 caractères',
-                      border: OutlineInputBorder(),
-                      hintText: 'Ex : ABC123',
+                    decoration: InputDecoration(
+                      labelText: l10n.groupCodeLabel,
+                      border: const OutlineInputBorder(),
+                      hintText: l10n.groupCodeHint,
                     ),
                   ),
                   const SizedBox(height: 12),
                   OutlinedButton(
                     onPressed: _joinGroup,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
-                        'Rejoindre',
-                        style: TextStyle(fontSize: 16),
+                        l10n.joinButton,
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

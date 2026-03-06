@@ -7,7 +7,7 @@ class NotificationService {
 
   /// URL du Cloudflare Worker (proxy sécurisé — ne contient aucune clé sensible).
   /// Remplacer par l'URL affichée après `wrangler deploy`.
-  static const _workerUrl = 'https://triflouze-notify.workers.dev';
+  static const _workerUrl = 'https://triflouze-notify.triflouze-notify.workers.dev';
 
   static Future<void> init(String uid) async {
     OneSignal.initialize(_appId);
@@ -26,14 +26,18 @@ class NotificationService {
     final targets = allMemberUids.where((uid) => uid != addedByUid).toList();
     if (targets.isEmpty) return;
 
-    await http.post(
-      Uri.parse(_workerUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'targets': targets,
-        'headings': {'en': '$category · ${amount.toStringAsFixed(2)} $currency'},
-        'contents': {'en': title},
-      }),
-    );
+    try {
+      await http.post(
+        Uri.parse(_workerUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'targets': targets,
+          'headings': {'en': '$category · ${amount.toStringAsFixed(2)} $currency'},
+          'contents': {'en': title},
+        }),
+      );
+    } catch (_) {
+      // Notification failure is non-critical — silently ignored
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/expense.dart';
 
 class ExpenseTile extends StatelessWidget {
@@ -15,24 +16,25 @@ class ExpenseTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListTile(
       onTap: () => onEdit(expense),
       onLongPress: () async {
         final confirm = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Supprimer la dépense'),
-            content: Text('Voulez-vous supprimer "${expense.title}" ?'),
+            title: Text(l10n.deleteExpenseTitle),
+            content: Text(l10n.deleteExpenseDialogConfirm(expense.title)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Annuler'),
+                child: Text(l10n.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text(
-                  'Supprimer',
-                  style: TextStyle(color: Colors.red),
+                child: Text(
+                  l10n.delete,
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             ],
@@ -46,7 +48,7 @@ class ExpenseTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Pour : ${expense.forMembers.join(', ')} · ${expense.category}\n'
+            '${l10n.forLabel} ${expense.forMembers.join(', ')} · ${expense.category}\n'
             '${expense.date.day.toString().padLeft(2, '0')}/'
             '${expense.date.month.toString().padLeft(2, '0')}/'
             '${expense.date.year}',

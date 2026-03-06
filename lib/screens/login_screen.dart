@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../services/auth_service.dart';
 import '../widgets/triflouze_logo.dart';
 import '../theme/triflouze_theme.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       _googleLoading = true;
       _error = null;
@@ -35,26 +37,26 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final result = await AuthService().signInWithGoogle();
       if (result == null && mounted) {
-        setState(() => _error = 'Connexion Google annulée.');
+        setState(() => _error = l10n.errorGoogleCancelled);
       }
-      // Navigation handled automatically by the StreamBuilder in main.dart
     } catch (e) {
-      if (mounted) setState(() => _error = 'Erreur Google Sign-In. Veuillez réessayer.');
+      if (mounted) setState(() => _error = l10n.errorGoogle);
     } finally {
       if (mounted) setState(() => _googleLoading = false);
     }
   }
 
   Future<void> _submit() async {
+    final l10n = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      setState(() => _error = 'Merci de remplir tous les champs.');
+      setState(() => _error = l10n.errorEmptyFields);
       return;
     }
     if (_isRegistering && _displayNameController.text.trim().isEmpty) {
-      setState(() => _error = 'Merci d\'entrer votre prénom.');
+      setState(() => _error = l10n.errorEmptyFirstName);
       return;
     }
 
@@ -71,34 +73,30 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         await auth.signIn(email, password);
       }
-      // Navigation handled automatically by the StreamBuilder in main.dart
     } catch (e) {
-      setState(() => _error = _friendlyError(e.toString()));
+      if (mounted) {
+        setState(() => _error = _friendlyError(e.toString(), AppLocalizations.of(context)!));
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  String _friendlyError(String error) {
+  String _friendlyError(String error, AppLocalizations l10n) {
     if (error.contains('invalid-credential') ||
         error.contains('wrong-password') ||
         error.contains('user-not-found')) {
-      return 'Email ou mot de passe incorrect.';
+      return l10n.errorInvalidCredential;
     }
-    if (error.contains('email-already-in-use')) {
-      return 'Cet email est déjà utilisé.';
-    }
-    if (error.contains('weak-password')) {
-      return 'Mot de passe trop faible (min. 6 caractères).';
-    }
-    if (error.contains('invalid-email')) {
-      return 'Adresse email invalide.';
-    }
-    return 'Une erreur est survenue. Veuillez réessayer.';
+    if (error.contains('email-already-in-use')) return l10n.errorEmailInUse;
+    if (error.contains('weak-password')) return l10n.errorWeakPassword;
+    if (error.contains('invalid-email')) return l10n.errorInvalidEmail;
+    return l10n.errorUnknown;
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -110,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const TriflouzeLogoVertical(iconSize: 88),
                 const SizedBox(height: 40),
                 Text(
-                  _isRegistering ? 'Créer un compte' : 'Connexion',
+                  _isRegistering ? l10n.registerTitle : l10n.loginTitle,
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -122,9 +120,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextField(
                     controller: _displayNameController,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Prénom',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.firstNameLabel,
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -132,18 +130,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.emailLabel,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: const InputDecoration(
-                    labelText: 'Mot de passe',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.passwordLabel,
+                    border: const OutlineInputBorder(),
                   ),
                   onSubmitted: (_) => _submit(),
                 ),
@@ -169,9 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : Text(
-                              _isRegistering
-                                  ? 'S\'inscrire'
-                                  : 'Se connecter',
+                              _isRegistering ? l10n.signUp : l10n.signIn,
                               style: const TextStyle(fontSize: 16),
                             ),
                     ),
@@ -184,9 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     _error = null;
                   }),
                   child: Text(
-                    _isRegistering
-                        ? 'Déjà un compte ? Se connecter'
-                        : 'Pas de compte ? S\'inscrire',
+                    _isRegistering ? l10n.switchToSignIn : l10n.switchToSignUp,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -196,8 +190,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        'ou',
-                        style: TextStyle(color: TriflouzeTheme.textMedium),
+                        l10n.orDivider,
+                        style: const TextStyle(color: TriflouzeTheme.textMedium),
                       ),
                     ),
                     const Expanded(child: Divider()),
@@ -215,11 +209,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.g_mobiledata, size: 24),
-                    label: const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 14),
+                    label: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
                       child: Text(
-                        'Continuer avec Google',
-                        style: TextStyle(fontSize: 16),
+                        l10n.continueWithGoogle,
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ),
                   ),

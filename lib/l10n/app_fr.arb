@@ -1,0 +1,211 @@
+{
+  "@@locale": "fr",
+
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "add": "Ajouter",
+  "close": "Fermer",
+  "next": "Suivant",
+  "user": "Utilisateur",
+  "errorPrefix": "Erreur : {error}",
+  "@errorPrefix": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+
+  "loginTitle": "Connexion",
+  "registerTitle": "Créer un compte",
+  "firstNameLabel": "Prénom",
+  "emailLabel": "Email",
+  "passwordLabel": "Mot de passe",
+  "signIn": "Se connecter",
+  "signUp": "S'inscrire",
+  "switchToSignIn": "Déjà un compte ? Se connecter",
+  "switchToSignUp": "Pas de compte ? S'inscrire",
+  "orDivider": "ou",
+  "continueWithGoogle": "Continuer avec Google",
+  "errorGoogleCancelled": "Connexion Google annulée.",
+  "errorGoogle": "Erreur Google Sign-In. Veuillez réessayer.",
+  "errorEmptyFields": "Merci de remplir tous les champs.",
+  "errorEmptyFirstName": "Merci d'entrer votre prénom.",
+  "errorInvalidCredential": "Email ou mot de passe incorrect.",
+  "errorEmailInUse": "Cet email est déjà utilisé.",
+  "errorWeakPassword": "Mot de passe trop faible (min. 6 caractères).",
+  "errorInvalidEmail": "Adresse email invalide.",
+  "errorUnknown": "Une erreur est survenue. Veuillez réessayer.",
+
+  "myGroupTitle": "Mon groupe",
+  "welcomeTitle": "Bienvenue !",
+  "welcomeSubtitle": "Créez un groupe ou rejoignez-en un existant.",
+  "createGroupTitle": "Créer un groupe",
+  "groupNameLabel": "Nom du groupe",
+  "groupNameHint": "Ex : Famille Dupont",
+  "createButton": "Créer",
+  "joinGroupTitle": "Rejoindre un groupe",
+  "groupCodeLabel": "Code à 6 caractères",
+  "groupCodeHint": "Ex : ABC123",
+  "joinButton": "Rejoindre",
+  "errorInvalidCode": "Code invalide. Vérifiez et réessayez.",
+  "errorGroupCreation": "Erreur lors de la création : {error}",
+  "@errorGroupCreation": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "errorGroupJoin": "Erreur lors de la jonction : {error}",
+  "@errorGroupJoin": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "createGroupButton": "Créer le groupe",
+  "errorEmptyGroupName": "Entrez un nom de groupe.",
+  "errorEmptyCode": "Entrez un code de groupe.",
+
+  "settingsTooltip": "Paramètres groupes",
+  "inviteTooltip": "Inviter",
+  "logoutTooltip": "Se déconnecter",
+  "inviteDialogTitle": "Inviter quelqu'un",
+  "inviteDialogSubtitle": "Partage ce code pour rejoindre le groupe :",
+  "copyButton": "Copier",
+  "codeCopied": "Code copié !",
+  "totalExpenses": "Total des dépenses (en €)",
+  "noExpensesForPeriod": "Aucune dépense pour cette période",
+  "viewDetails": "Voir le détail",
+  "filterAll": "Toujours",
+  "filterToday": "Ce jour",
+  "filterThisWeek": "Cette semaine",
+  "filterThisMonth": "Ce mois",
+  "filterThisYear": "Cette année",
+  "filterAllMembers": "Tous",
+  "filterAllCategories": "Toutes",
+  "deleteBeneficiaryTitle": "Supprimer le bénéficiaire",
+  "deleteBeneficiaryConfirm": "Voulez-vous supprimer \"{name}\" de la liste ?",
+  "@deleteBeneficiaryConfirm": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "statisticsTitle": "Statistiques",
+  "categoryBreakdown": "Répartition par catégorie",
+  "expenseCount": "{count, plural, one{# dépense} other{# dépenses}}",
+  "@expenseCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "totalLabel": "Total",
+
+  "whichCategory": "Quelle catégorie ?",
+  "addCategoryTile": "Ajouter",
+  "newCategoryTitle": "Nouvelle catégorie",
+  "categoryNameLabel": "Nom",
+  "chooseIcon": "Choisir une icône :",
+  "whichAmount": "Quel montant ?",
+  "expenseTitleLabel": "Intitulé de la dépense",
+  "expenseTitleHint": "Ex: Courses Carrefour",
+  "skipButton": "Passer — utiliser \"{category}\"",
+  "@skipButton": {
+    "placeholders": { "category": { "type": "String" } }
+  },
+  "forWho": "Pour qui ?",
+  "addBeneficiary": "Ajouter un bénéficiaire",
+  "addBeneficiaryHint": "Ex: Mamie, Enfants…",
+  "moreDetails": "Plus de détails",
+  "dateLabel": "Date",
+  "commentLabel": "Commentaire",
+  "commentHint": "Optionnel",
+  "tagsLabel": "Tags",
+  "addExpenseButton": "Ajouter la dépense",
+  "editExpenseButton": "Modifier",
+  "deleteCategoryTitle": "Supprimer la catégorie",
+  "deleteCategoryConfirm": "Supprimer \"{name}\" ?",
+  "@deleteCategoryConfirm": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "deleteExpenseTitle": "Supprimer la dépense",
+  "deleteExpenseConfirm": "Supprimer \"{title}\" ?",
+  "@deleteExpenseConfirm": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+
+  "groupsTitle": "Groupes",
+  "myGroupsSection": "Mes groupes",
+  "noGroupsText": "Aucun groupe pour l'instant.",
+  "primaryBadge": "Principal",
+  "activeBadge": "Actif",
+  "adminBadge": "Admin",
+  "memberCount": "{count, plural, one{# membre} other{# membres}}",
+  "@memberCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "primaryTooltip": "Groupe principal",
+  "setPrimaryTooltip": "Définir comme principal",
+  "manageGroupTooltip": "Gérer le groupe",
+  "membersSection": "Membres",
+  "beneficiariesSection": "Bénéficiaires",
+  "leaveGroupButton": "Quitter le groupe",
+  "deleteGroupButton": "Supprimer le groupe",
+  "transferAdminTitle": "Transférer l'administration",
+  "transferAdminMessage": "Transférer le rôle d'administrateur à {name} ?\nVous ne serez plus administrateur de ce groupe.",
+  "@transferAdminMessage": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "transferButton": "Transférer",
+  "removeFromGroupTitle": "Retirer du groupe",
+  "removeFromGroupMessage": "Retirer {name} du groupe ?\n\n{name} restera bénéficiaire et continuera d'apparaître dans les dépenses existantes.",
+  "@removeFromGroupMessage": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "removeButton": "Retirer",
+  "removeBeneficiaryTitle": "Supprimer le bénéficiaire",
+  "removeBeneficiaryConfirm": "Supprimer \"{name}\" des bénéficiaires ?",
+  "@removeBeneficiaryConfirm": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "removeBeneficiaryWarning": "{name} sera retiré(e) de toutes les dépenses du groupe. Ces dépenses peuvent se retrouver sans bénéficiaire.",
+  "@removeBeneficiaryWarning": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "leaveGroupTitle": "Quitter le groupe",
+  "leaveGroupLastMember": "Vous êtes le seul membre. Quitter le groupe le supprimera définitivement.",
+  "leaveGroupAdminMessage": "En quittant le groupe, {name} deviendra automatiquement administrateur.",
+  "@leaveGroupAdminMessage": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "leaveGroupConfirm": "Voulez-vous vraiment quitter \"{group}\" ?",
+  "@leaveGroupConfirm": {
+    "placeholders": { "group": { "type": "String" } }
+  },
+  "leaveButton": "Quitter",
+  "deleteGroupTitle": "Supprimer le groupe",
+  "deleteGroupConfirm": "Supprimer \"{group}\" ?",
+  "@deleteGroupConfirm": {
+    "placeholders": { "group": { "type": "String" } }
+  },
+  "deleteGroupWarning": "Cette action est irréversible. Toutes les dépenses et catégories seront supprimées définitivement.",
+  "deletePermanentlyButton": "Supprimer définitivement",
+  "meSuffix": "(moi)",
+  "transferTooltip": "Transférer l'administration à {name}",
+  "@transferTooltip": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "kickTooltip": "Retirer {name} du groupe",
+  "@kickTooltip": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "deleteBeneficiaryTooltip": "Supprimer {name}",
+  "@deleteBeneficiaryTooltip": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "forLabel": "Pour :",
+  "deleteExpenseDialogConfirm": "Voulez-vous supprimer \"{title}\" ?",
+  "@deleteExpenseDialogConfirm": {
+    "placeholders": { "title": { "type": "String" } }
+  },
+
+  "chooseCategoryTitle": "Choisir une catégorie",
+  "newCategoryButton": "Nouvelle\ncatégorie",
+
+  "iconSectionFood": "Alimentation",
+  "iconSectionHousing": "Logement",
+  "iconSectionTransport": "Transport",
+  "iconSectionHealth": "Santé",
+  "iconSectionEntertainment": "Loisirs",
+  "iconSectionShopping": "Shopping",
+  "iconSectionTech": "Tech",
+  "iconSectionOther": "Autres"
+}

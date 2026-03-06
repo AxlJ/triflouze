@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/expense.dart';
 import '../models/category.dart';
 import '../theme/triflouze_theme.dart';
@@ -67,15 +68,29 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   // ── Icônes par section pour le sélecteur de catégorie
   static const Map<String, List<String>> _iconsBySection = {
-    'Alimentation': ['🛒', '🍎', '🥦', '🥩', '🥐', '🧃', '🍷', '☕', '🍕', '🍣'],
-    'Logement':     ['🏠', '🛋️', '🔑', '🪴', '🧹', '💡', '🔧', '🛁', '🪟', '📦'],
-    'Transport':    ['🚗', '✈️', '🚂', '🚌', '🛵', '⛽', '🅿️', '🚕', '🚲', '🛳️'],
-    'Santé':        ['💊', '🏥', '🩺', '🧴', '💉', '🩹', '🧪', '🏋️', '🧘', '😷'],
-    'Loisirs':      ['🎮', '🎬', '🎵', '📚', '🎨', '⚽', '🎭', '🏖️', '🎲', '🎤'],
-    'Shopping':     ['👕', '👟', '💍', '🎒', '🕶️', '⌚', '💄', '🛍️', '🧢', '👗'],
-    'Tech':         ['💻', '📱', '🖥️', '🎧', '📷', '🖨️', '🔋', '💾', '🖱️', '📡'],
-    'Autres':       ['📦', '🎁', '💼', '📝', '🔐', '🌍', '🐾', '👶', '🌸', '⭐'],
+    'food':          ['🛒', '🍎', '🥦', '🥩', '🥐', '🧃', '🍷', '☕', '🍕', '🍣'],
+    'housing':       ['🏠', '🛋️', '🔑', '🪴', '🧹', '💡', '🔧', '🛁', '🪟', '📦'],
+    'transport':     ['🚗', '✈️', '🚂', '🚌', '🛵', '⛽', '🅿️', '🚕', '🚲', '🛳️'],
+    'health':        ['💊', '🏥', '🩺', '🧴', '💉', '🩹', '🧪', '🏋️', '🧘', '😷'],
+    'entertainment': ['🎮', '🎬', '🎵', '📚', '🎨', '⚽', '🎭', '🏖️', '🎲', '🎤'],
+    'shopping':      ['👕', '👟', '💍', '🎒', '🕶️', '⌚', '💄', '🛍️', '🧢', '👗'],
+    'tech':          ['💻', '📱', '🖥️', '🎧', '📷', '🖨️', '🔋', '💾', '🖱️', '📡'],
+    'other':         ['📦', '🎁', '💼', '📝', '🔐', '🌍', '🐾', '👶', '🌸', '⭐'],
   };
+
+  String _sectionDisplayName(String key, AppLocalizations l10n) {
+    switch (key) {
+      case 'food':          return l10n.iconSectionFood;
+      case 'housing':       return l10n.iconSectionHousing;
+      case 'transport':     return l10n.iconSectionTransport;
+      case 'health':        return l10n.iconSectionHealth;
+      case 'entertainment': return l10n.iconSectionEntertainment;
+      case 'shopping':      return l10n.iconSectionShopping;
+      case 'tech':          return l10n.iconSectionTech;
+      case 'other':         return l10n.iconSectionOther;
+      default:              return key;
+    }
+  }
 
   @override
   void initState() {
@@ -198,13 +213,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ── Ajouter une catégorie ────────────────────────────────────────────────────
 
   Future<void> _showAddCategoryDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final nameCtrl = TextEditingController();
     String selectedIcon = '📦';
     await showDialog(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setD) => AlertDialog(
-          title: const Text('Nouvelle catégorie'),
+          title: Text(l10n.newCategoryTitle),
           content: SizedBox(
             width: double.maxFinite,
             child: SingleChildScrollView(
@@ -215,10 +231,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   TextField(
                     controller: nameCtrl,
                     autofocus: true,
-                    decoration: const InputDecoration(labelText: 'Nom'),
+                    decoration: InputDecoration(labelText: l10n.categoryNameLabel),
                   ),
                   const SizedBox(height: 16),
-                  Text('Choisir une icône :',
+                  Text(l10n.chooseIcon,
                       style: GoogleFonts.nunito(
                           fontWeight: FontWeight.w700,
                           color: TriflouzeTheme.textDark)),
@@ -228,7 +244,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 6),
-                            child: Text(section.key,
+                            child: Text(_sectionDisplayName(section.key, l10n),
                                 style: GoogleFonts.nunito(
                                     fontSize: 12,
                                     color: TriflouzeTheme.textMedium,
@@ -269,7 +285,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text('Annuler')),
+                child: Text(l10n.cancel)),
             TextButton(
               onPressed: () {
                 if (nameCtrl.text.trim().isNotEmpty) {
@@ -284,7 +300,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   });
                 }
               },
-              child: const Text('Ajouter'),
+              child: Text(l10n.add),
             ),
           ],
         ),
@@ -382,19 +398,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _confirmDelete() async {
+    final l10n = AppLocalizations.of(context)!;
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer la dépense'),
-        content: Text('Supprimer "${widget.expenseToEdit!.title}" ?'),
+        title: Text(l10n.deleteExpenseTitle),
+        content: Text(l10n.deleteExpenseConfirm(widget.expenseToEdit!.title)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer',
-                style: TextStyle(color: Colors.red)),
+            child: Text(l10n.delete,
+                style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -422,13 +439,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ────────────────────────────────────────────────────────────────────────────
 
   Widget _buildCategoryStep() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 20, 24, 4),
           child: Text(
-            'Quelle catégorie ?',
+            l10n.whichCategory,
             style: GoogleFonts.nunito(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -446,8 +464,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             ),
             itemCount: widget.categories.length + 1,
             itemBuilder: (context, i) {
-              if (i == widget.categories.length) return _addCategoryTile();
-              return _categoryTile(widget.categories[i]);
+              if (i == widget.categories.length) return _addCategoryTile(l10n);
+              return _categoryTile(widget.categories[i], l10n);
             },
           ),
         ),
@@ -455,7 +473,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  Widget _categoryTile(Category cat) {
+  Widget _categoryTile(Category cat, AppLocalizations l10n) {
     final isSelected = _category == cat.name;
     return GestureDetector(
       onTap: () {
@@ -472,16 +490,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               final ok = await showDialog<bool>(
                 context: context,
                 builder: (ctx) => AlertDialog(
-                  title: const Text('Supprimer la catégorie'),
-                  content: Text('Supprimer "${cat.name}" ?'),
+                  title: Text(l10n.deleteCategoryTitle),
+                  content: Text(l10n.deleteCategoryConfirm(cat.name)),
                   actions: [
                     TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('Annuler')),
+                        child: Text(l10n.cancel)),
                     TextButton(
                       onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('Supprimer',
-                          style: TextStyle(color: Colors.red)),
+                      child: Text(l10n.delete,
+                          style: const TextStyle(color: Colors.red)),
                     ),
                   ],
                 ),
@@ -524,7 +542,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     );
   }
 
-  Widget _addCategoryTile() => GestureDetector(
+  Widget _addCategoryTile(AppLocalizations l10n) => GestureDetector(
         onTap: _showAddCategoryDialog,
         child: Container(
           decoration: BoxDecoration(
@@ -538,7 +556,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               Icon(Icons.add_circle_outline,
                   size: 32, color: TriflouzeTheme.textMedium),
               const SizedBox(height: 6),
-              Text('Ajouter',
+              Text(l10n.addCategoryTile,
                   style: GoogleFonts.nunito(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -553,6 +571,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ────────────────────────────────────────────────────────────────────────────
 
   Widget _buildAmountStep() {
+    final l10n = AppLocalizations.of(context)!;
     final canNext = _amountStr.isNotEmpty && (double.tryParse(_amountStr) ?? 0) > 0;
     return Column(
       children: [
@@ -561,7 +580,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Text('Quel montant ?',
+            child: Text(l10n.whichAmount,
                 style: GoogleFonts.nunito(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
@@ -638,7 +657,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
           child: _numpad(),
         ),
-        _nextButton('Suivant', _next, enabled: canNext),
+        _nextButton(l10n.next, _next, enabled: canNext),
       ],
     );
   }
@@ -694,13 +713,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ────────────────────────────────────────────────────────────────────────────
 
   Widget _buildTitleStep() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _recapRow(),
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Text('Intitulé de la dépense',
+          child: Text(l10n.expenseTitleLabel,
               style: GoogleFonts.nunito(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
@@ -715,7 +735,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             style: GoogleFonts.nunito(
                 fontSize: 18, fontWeight: FontWeight.w600),
             decoration: InputDecoration(
-              hintText: _category ?? 'Ex: Courses Carrefour',
+              hintText: _category ?? l10n.expenseTitleHint,
               hintStyle: GoogleFonts.nunito(
                   color: TriflouzeTheme.border,
                   fontSize: 18,
@@ -732,13 +752,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               _next();
             },
             child: Text(
-              'Passer — utiliser "${_category ?? 'Dépense'}"',
+              l10n.skipButton(_category ?? 'Dépense'),
               style: GoogleFonts.nunito(
                   color: TriflouzeTheme.textMedium, fontSize: 13),
             ),
           ),
         ),
-        _nextButton('Suivant', _next),
+        _nextButton(l10n.next, _next),
       ],
     );
   }
@@ -748,6 +768,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   // ────────────────────────────────────────────────────────────────────────────
 
   Widget _buildMembersStep() {
+    final l10n = AppLocalizations.of(context)!;
     final canSubmit = _selectedMembers.isNotEmpty;
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 16),
@@ -757,7 +778,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           _recapRow(),
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-            child: Text('Pour qui ?',
+            child: Text(l10n.forWho,
                 style: GoogleFonts.nunito(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
@@ -817,9 +838,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   child: TextField(
                     controller: _newMemberCtrl,
                     textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(
-                      labelText: 'Ajouter un bénéficiaire',
-                      hintText: 'Ex: Mamie, Enfants…',
+                    decoration: InputDecoration(
+                      labelText: l10n.addBeneficiary,
+                      hintText: l10n.addBeneficiaryHint,
                     ),
                     onSubmitted: _addMember,
                   ),
@@ -843,7 +864,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   _showDetails ? Icons.expand_less : Icons.expand_more,
                   size: 18,
                   color: TriflouzeTheme.textMedium),
-              label: Text('Plus de détails',
+              label: Text(l10n.moreDetails,
                   style: GoogleFonts.nunito(
                       color: TriflouzeTheme.textMedium,
                       fontWeight: FontWeight.w600,
@@ -865,9 +886,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   if (picked != null) setState(() => _date = picked);
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Date',
-                    suffixIcon: Icon(Icons.calendar_today),
+                  decoration: InputDecoration(
+                    labelText: l10n.dateLabel,
+                    suffixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: Text(
                     '${_date.day.toString().padLeft(2, '0')}/'
@@ -884,8 +905,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               child: TextField(
                 controller: _commentCtrl,
                 maxLines: 2,
-                decoration: const InputDecoration(
-                    labelText: 'Commentaire', hintText: 'Optionnel'),
+                decoration: InputDecoration(
+                    labelText: l10n.commentLabel,
+                    hintText: l10n.commentHint),
               ),
             ),
             const SizedBox(height: 12),
@@ -893,7 +915,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             if (widget.existingTags.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Text('Tags',
+                child: Text(l10n.tagsLabel,
                     style: GoogleFonts.nunito(
                         fontSize: 12,
                         color: TriflouzeTheme.textMedium,
@@ -926,7 +948,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           ],
           const SizedBox(height: 8),
           _nextButton(
-            _isEditing ? 'Modifier' : 'Ajouter la dépense',
+            _isEditing ? l10n.editExpenseButton : l10n.addExpenseButton,
             canSubmit ? _submit : null,
             enabled: canSubmit,
           ),

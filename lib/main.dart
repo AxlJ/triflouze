@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import 'firebase_options.dart';
 import 'services/auth_service.dart';
 import 'services/notification_service.dart';
@@ -25,6 +27,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Triflouze',
       theme: TriflouzeTheme.light,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('fr'),
+        Locale('en'),
+      ],
       home: StreamBuilder<User?>(
         stream: AuthService().authStateChanges,
         builder: (context, snapshot) {

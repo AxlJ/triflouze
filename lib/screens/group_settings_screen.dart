@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:triflouze/l10n/app_localizations.dart';
 import '../models/category.dart';
 import '../services/user_service.dart';
 import '../services/firestore_service.dart';
@@ -71,9 +72,10 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
   }
 
   Future<void> _createGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final name = _groupNameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _error = 'Entrez un nom de groupe.');
+      setState(() => _error = l10n.errorEmptyGroupName);
       return;
     }
     setState(() { _creating = true; _error = null; });
@@ -83,7 +85,7 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
       final code = _generateCode();
       final groupRef = db.collection('groups').doc();
       final user = widget.user;
-      final displayName = user.displayName ?? user.email ?? 'Utilisateur';
+      final displayName = user.displayName ?? user.email ?? l10n.user;
 
       final batch = db.batch();
       batch.set(groupRef, {
@@ -113,16 +115,17 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
       _groupNameController.clear();
       if (mounted) setState(() => _error = null);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Erreur : $e');
+      if (mounted) setState(() => _error = l10n.errorGroupCreation(e.toString()));
     } finally {
       if (mounted) setState(() => _creating = false);
     }
   }
 
   Future<void> _joinGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final code = _groupCodeController.text.trim().toUpperCase();
     if (code.isEmpty) {
-      setState(() => _error = 'Entrez un code de groupe.');
+      setState(() => _error = l10n.errorEmptyCode);
       return;
     }
     setState(() { _joining = true; _error = null; });
@@ -136,13 +139,13 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
           .get();
 
       if (snap.docs.isEmpty) {
-        setState(() => _error = 'Code invalide. Vérifiez et réessayez.');
+        if (mounted) setState(() => _error = l10n.errorInvalidCode);
         return;
       }
 
       final groupRef = snap.docs.first.reference;
       final user = widget.user;
-      final displayName = user.displayName ?? user.email ?? 'Utilisateur';
+      final displayName = user.displayName ?? user.email ?? l10n.user;
 
       await groupRef.update({
         'members': FieldValue.arrayUnion([
@@ -153,7 +156,7 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
       });
       _groupCodeController.clear();
     } catch (e) {
-      if (mounted) setState(() => _error = 'Erreur : $e');
+      if (mounted) setState(() => _error = l10n.errorGroupJoin(e.toString()));
     } finally {
       if (mounted) setState(() => _joining = false);
     }
@@ -187,9 +190,10 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: TriflouzeTheme.surface,
-      appBar: AppBar(title: const Text('Groupes')),
+      appBar: AppBar(title: Text(l10n.groupsTitle)),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
             .collection('groups')
@@ -203,29 +207,29 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _sectionTitle('Mes groupes'),
+                _sectionTitle(l10n.myGroupsSection),
                 const SizedBox(height: 12),
 
                 if (snapshot.connectionState == ConnectionState.waiting)
                   const Center(child: CircularProgressIndicator())
                 else if (docs.isEmpty)
-                  Text('Aucun groupe pour l\'instant.',
+                  Text(l10n.noGroupsText,
                       style: GoogleFonts.nunito(color: TriflouzeTheme.textMedium))
                 else
-                  ...docs.map((doc) => _buildGroupTile(doc)),
+                  ...docs.map((doc) => _buildGroupTile(doc, l10n)),
 
                 const SizedBox(height: 32),
                 const Divider(),
                 const SizedBox(height: 24),
 
-                _sectionTitle('Créer un groupe'),
+                _sectionTitle(l10n.createGroupTitle),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _groupNameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nom du groupe',
-                    hintText: 'Ex : Famille Dupont',
-                    prefixIcon: Icon(Icons.group),
+                  decoration: InputDecoration(
+                    labelText: l10n.groupNameLabel,
+                    hintText: l10n.groupNameHint,
+                    prefixIcon: const Icon(Icons.group),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -235,7 +239,7 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
                     onPressed: _creating ? null : _createGroup,
                     child: _creating
                         ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Text('Créer le groupe'),
+                        : Text(l10n.createGroupButton),
                   ),
                 ),
 
@@ -243,15 +247,15 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
                 const Divider(),
                 const SizedBox(height: 24),
 
-                _sectionTitle('Rejoindre un groupe'),
+                _sectionTitle(l10n.joinGroupTitle),
                 const SizedBox(height: 12),
                 TextField(
                   controller: _groupCodeController,
                   textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
-                    labelText: 'Code à 6 caractères',
-                    hintText: 'Ex : ABC123',
-                    prefixIcon: Icon(Icons.link),
+                  decoration: InputDecoration(
+                    labelText: l10n.groupCodeLabel,
+                    hintText: l10n.groupCodeHint,
+                    prefixIcon: const Icon(Icons.link),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -261,7 +265,7 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
                     onPressed: _joining ? null : _joinGroup,
                     child: _joining
                         ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Text('Rejoindre'),
+                        : Text(l10n.joinButton),
                   ),
                 ),
 
@@ -300,7 +304,7 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
             fontSize: 16, fontWeight: FontWeight.w700, color: TriflouzeTheme.textDark),
       );
 
-  Widget _buildGroupTile(QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+  Widget _buildGroupTile(QueryDocumentSnapshot<Map<String, dynamic>> doc, AppLocalizations l10n) {
     final data = doc.data();
     final groupId = doc.id;
     final name = data['name'] as String? ?? '(sans nom)';
@@ -365,22 +369,21 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
                           color: TriflouzeTheme.textDark),
                     ),
                     const SizedBox(height: 4),
-                    // Badges sous le nom — ils ne déborderont jamais
                     Wrap(
                       spacing: 5,
                       runSpacing: 4,
                       children: [
                         Text(
-                          '$memberCount membre${memberCount > 1 ? 's' : ''}',
+                          l10n.memberCount(memberCount),
                           style: GoogleFonts.nunito(
                               fontSize: 12, color: TriflouzeTheme.textMedium),
                         ),
                         if (isAdmin)
-                          _badge('Admin', TriflouzeTheme.secondary),
+                          _badge(l10n.adminBadge, TriflouzeTheme.secondary),
                         if (isActive)
-                          _badge('Actif', TriflouzeTheme.primary),
+                          _badge(l10n.activeBadge, TriflouzeTheme.primary),
                         if (isPrimary)
-                          _badge('Principal', TriflouzeTheme.accent,
+                          _badge(l10n.primaryBadge, TriflouzeTheme.accent,
                               textColor: TriflouzeTheme.textDark),
                       ],
                     ),
@@ -395,12 +398,12 @@ class _GroupSettingsScreenState extends State<GroupSettingsScreen> {
                   color: isPrimary ? TriflouzeTheme.accent : TriflouzeTheme.border,
                   size: 22,
                 ),
-                tooltip: isPrimary ? 'Groupe principal' : 'Définir comme principal',
+                tooltip: isPrimary ? l10n.primaryTooltip : l10n.setPrimaryTooltip,
                 onPressed: isPrimary ? null : () => _setPrimary(groupId),
               ),
               IconButton(
                 icon: Icon(Icons.more_vert, color: TriflouzeTheme.textMedium),
-                tooltip: 'Gérer le groupe',
+                tooltip: l10n.manageGroupTooltip,
                 onPressed: () => _openManagementSheet(doc),
               ),
             ],
@@ -496,20 +499,19 @@ class _ManagementSheetState extends State<_ManagementSheet> {
   // ── Transférer l'admin ──────────────────────────────────────────────────────
 
   Future<void> _transferAdmin(String newAdminUid, String newAdminName) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Transférer l\'administration'),
-        content: Text(
-            'Transférer le rôle d\'administrateur à $newAdminName ?\n'
-            'Vous ne serez plus administrateur de ce groupe.'),
+        title: Text(l10n.transferAdminTitle),
+        content: Text(l10n.transferAdminMessage(newAdminName)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           ElevatedButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Transférer')),
+              child: Text(l10n.transferButton)),
         ],
       ),
     );
@@ -525,7 +527,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur : $e')));
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorPrefix(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -535,20 +537,19 @@ class _ManagementSheetState extends State<_ManagementSheet> {
   // ── Retirer un membre authentifié ───────────────────────────────────────────
 
   Future<void> _kickMember(String uid, String name) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Retirer du groupe'),
-        content: Text(
-            'Retirer $name du groupe ?\n\n'
-            '$name restera bénéficiaire et continuera d\'apparaître dans les dépenses existantes.'),
+        title: Text(l10n.removeFromGroupTitle),
+        content: Text(l10n.removeFromGroupMessage(name)),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Retirer', style: TextStyle(color: Colors.red)),
+            child: Text(l10n.removeButton, style: const TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -562,7 +563,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorPrefix(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -572,15 +573,16 @@ class _ManagementSheetState extends State<_ManagementSheet> {
   // ── Supprimer un bénéficiaire ────────────────────────────────────────────────
 
   Future<void> _removeBeneficiary(String name) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer le bénéficiaire'),
+        title: Text(l10n.removeBeneficiaryTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Supprimer "$name" des bénéficiaires ?'),
+            Text(l10n.removeBeneficiaryConfirm(name)),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -596,8 +598,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      '$name sera retiré(e) de toutes les dépenses du groupe. '
-                      'Ces dépenses peuvent se retrouver sans bénéficiaire.',
+                      l10n.removeBeneficiaryWarning(name),
                       style: const TextStyle(fontSize: 13),
                     ),
                   ),
@@ -609,11 +610,11 @@ class _ManagementSheetState extends State<_ManagementSheet> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -627,7 +628,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorPrefix(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -637,15 +638,15 @@ class _ManagementSheetState extends State<_ManagementSheet> {
   // ── Quitter le groupe ───────────────────────────────────────────────────────
 
   Future<void> _leaveGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final members = _members;
     final remaining = members.where((m) => m['uid'] != widget.user.uid).toList();
     final isLastMember = remaining.isEmpty;
 
     String message;
     if (isLastMember) {
-      message = 'Vous êtes le seul membre. Quitter le groupe le supprimera définitivement.';
+      message = l10n.leaveGroupLastMember;
     } else if (_isAdmin) {
-      // Trouver qui sera le prochain admin
       remaining.sort((a, b) {
         final aTs = a['joinedAt'];
         final bTs = b['joinedAt'];
@@ -653,25 +654,25 @@ class _ManagementSheetState extends State<_ManagementSheet> {
         final bTime = bTs is Timestamp ? bTs.millisecondsSinceEpoch : 0;
         return aTime.compareTo(bTime);
       });
-      final nextAdminName = remaining.first['displayName'] as String? ?? 'un membre';
-      message = 'En quittant le groupe, $nextAdminName deviendra automatiquement administrateur.';
+      final nextAdminName = remaining.first['displayName'] as String? ?? l10n.user;
+      message = l10n.leaveGroupAdminMessage(nextAdminName);
     } else {
-      message = 'Voulez-vous vraiment quitter "$_groupName" ?';
+      message = l10n.leaveGroupConfirm(_groupName);
     }
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Quitter le groupe'),
+        title: Text(l10n.leaveGroupTitle),
         content: Text(message),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              isLastMember ? 'Supprimer' : 'Quitter',
+              isLastMember ? l10n.delete : l10n.leaveButton,
               style: const TextStyle(color: Colors.red),
             ),
           ),
@@ -694,7 +695,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur : $e')));
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorPrefix(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -704,15 +705,16 @@ class _ManagementSheetState extends State<_ManagementSheet> {
   // ── Supprimer le groupe ─────────────────────────────────────────────────────
 
   Future<void> _deleteGroup() async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Supprimer le groupe'),
+        title: Text(l10n.deleteGroupTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Supprimer "$_groupName" ?'),
+            Text(l10n.deleteGroupConfirm(_groupName)),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -726,10 +728,10 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                   Icon(Icons.warning_amber_rounded,
                       color: Colors.red.shade700, size: 20),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Cette action est irréversible. Toutes les dépenses et catégories seront supprimées définitivement.',
-                      style: TextStyle(fontSize: 13),
+                      l10n.deleteGroupWarning,
+                      style: const TextStyle(fontSize: 13),
                     ),
                   ),
                 ],
@@ -740,11 +742,11 @@ class _ManagementSheetState extends State<_ManagementSheet> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Annuler')),
+              child: Text(l10n.cancel)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Supprimer définitivement'),
+            child: Text(l10n.deletePermanentlyButton),
           ),
         ],
       ),
@@ -761,7 +763,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur : $e')));
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorPrefix(e.toString()))));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -772,6 +774,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final members = _members;
     final beneficiaries = _customBeneficiaries;
     final maxHeight = MediaQuery.of(context).size.height * 0.85;
@@ -842,16 +845,16 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Section membres authentifiés
-                  _sheetSectionTitle('Membres'),
+                  _sheetSectionTitle(l10n.membersSection),
                   const SizedBox(height: 6),
-                  ...members.map((m) => _memberTile(m)),
+                  ...members.map((m) => _memberTile(m, l10n)),
 
                   // Section bénéficiaires custom
                   if (beneficiaries.isNotEmpty) ...[
                     const SizedBox(height: 16),
-                    _sheetSectionTitle('Bénéficiaires'),
+                    _sheetSectionTitle(l10n.beneficiariesSection),
                     const SizedBox(height: 6),
-                    ...beneficiaries.map((name) => _beneficiaryTile(name)),
+                    ...beneficiaries.map((name) => _beneficiaryTile(name, l10n)),
                   ],
                   const SizedBox(height: 8),
                 ],
@@ -886,7 +889,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                       ),
                       onPressed: _leaveGroup,
                       icon: const Icon(Icons.exit_to_app, size: 18),
-                      label: const Text('Quitter le groupe'),
+                      label: Text(l10n.leaveGroupButton),
                     ),
                   ),
                   if (_isAdmin) ...[
@@ -900,7 +903,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                         ),
                         onPressed: _deleteGroup,
                         icon: const Icon(Icons.delete_forever, size: 18),
-                        label: const Text('Supprimer le groupe'),
+                        label: Text(l10n.deleteGroupButton),
                       ),
                     ),
                   ],
@@ -924,7 +927,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
         ),
       );
 
-  Widget _beneficiaryTile(String name) {
+  Widget _beneficiaryTile(String name, AppLocalizations l10n) {
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -954,7 +957,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
           if (_isAdmin)
             IconButton(
               icon: const Icon(Icons.delete_outline, size: 20, color: Colors.red),
-              tooltip: 'Supprimer $name',
+              tooltip: l10n.deleteBeneficiaryTooltip(name),
               onPressed: () => _removeBeneficiary(name),
             ),
         ],
@@ -962,7 +965,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
     );
   }
 
-  Widget _memberTile(Map<String, dynamic> member) {
+  Widget _memberTile(Map<String, dynamic> member, AppLocalizations l10n) {
     final uid = member['uid'] as String? ?? '';
     final name = member['displayName'] as String? ?? '?';
     final isThisAdmin = uid == _adminUid;
@@ -991,7 +994,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              '$name${isMe ? ' (moi)' : ''}',
+              '$name${isMe ? ' (${l10n.meSuffix})' : ''}',
               style: GoogleFonts.nunito(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -1007,7 +1010,7 @@ class _ManagementSheetState extends State<_ManagementSheet> {
                 border: Border.all(
                     color: TriflouzeTheme.secondary.withValues(alpha: 0.4)),
               ),
-              child: Text('Admin',
+              child: Text(l10n.adminBadge,
                   style: GoogleFonts.nunito(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
@@ -1018,14 +1021,14 @@ class _ManagementSheetState extends State<_ManagementSheet> {
             IconButton(
               icon: Icon(Icons.admin_panel_settings_outlined,
                   size: 20, color: TriflouzeTheme.textMedium),
-              tooltip: 'Transférer l\'administration à $name',
+              tooltip: l10n.transferTooltip(name),
               onPressed: () => _transferAdmin(uid, name),
             ),
             // Retirer du groupe (devient bénéficiaire)
             IconButton(
               icon: const Icon(Icons.person_remove_outlined,
                   size: 20, color: Colors.red),
-              tooltip: 'Retirer $name du groupe',
+              tooltip: l10n.kickTooltip(name),
               onPressed: () => _kickMember(uid, name),
             ),
           ],
