@@ -5,22 +5,31 @@
   <!-- Background: sage green rounded square -->
   <rect x="0" y="0" width="512" height="512" rx="112" ry="112" fill="#6B9E7A"/>
 
-  <!-- Crossbar (pill-shaped) -->
-  <rect x="80" y="100" width="352" height="80" rx="40" fill="white"/>
-
   <!-- Vertical stem -->
   <rect x="216" y="140" width="80" height="272" rx="36" fill="white"/>
 
-  <!-- Left connector -->
-  <line x1="120" y1="180" x2="120" y2="228" stroke="white" stroke-width="11" stroke-linecap="round"/>
-  <!-- Right connector -->
-  <line x1="392" y1="180" x2="392" y2="228" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <!-- Tilted crossbar — 12° clockwise around stem center (256, 140)
+       Left side goes down (coin = heavier), right side goes up (bill = lighter) -->
+  <rect x="80" y="100" width="352" height="80" rx="40" fill="white"
+        transform="rotate(12, 256, 140)"/>
 
-  <!-- Left coin -->
-  <circle cx="120" cy="276" r="48" fill="#E8B86D"/>
-  <circle cx="120" cy="276" r="34" fill="none" stroke="white" stroke-width="5"/>
+  <!-- Left chain — from rotated left pill bottom (≈131, 207) down to coin -->
+  <line x1="131" y1="207" x2="131" y2="260" stroke="white" stroke-width="11" stroke-linecap="round"/>
 
-  <!-- Right coin -->
-  <circle cx="392" cy="276" r="48" fill="#E8B86D"/>
-  <circle cx="392" cy="276" r="34" fill="none" stroke="white" stroke-width="5"/>
+  <!-- Right chain — from rotated right pill bottom (≈397, 151) down to bill -->
+  <line x1="397" y1="151" x2="397" y2="232" stroke="white" stroke-width="11" stroke-linecap="round"/>
+
+  <!-- Left coin (lower — heavier side) -->
+  <circle cx="131" cy="308" r="48" fill="#E8B86D"/>
+  <circle cx="131" cy="308" r="34" fill="none" stroke="white" stroke-width="5"/>
+
+  <!-- Right banknote (higher — lighter side) -->
+  <!-- Outer rectangle: 88×54, centered at (397, 259) -->
+  <rect x="353" y="232" width="88" height="54" rx="9" fill="#E8B86D"/>
+  <!-- Inner border frame -->
+  <rect x="360" y="239" width="74" height="40" rx="6" fill="none" stroke="white" stroke-width="4"/>
+  <!-- Horizontal lines suggesting printed text/value -->
+  <line x1="372" y1="250" x2="434" y2="250" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="372" y1="259" x2="434" y2="259" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="372" y1="268" x2="434" y2="268" stroke="white" stroke-width="3" stroke-linecap="round"/>
 </svg>
