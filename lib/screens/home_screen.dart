@@ -428,26 +428,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.settings_outlined),
-                    tooltip: l10n.settingsTooltip,
-                    onPressed: () async {
-                      final primaryGroupId = await UserService()
-                          .getPrimaryGroupId(widget.user.uid);
-                      if (!context.mounted) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GroupSettingsScreen(
-                            user: widget.user,
-                            currentGroupId: widget.groupId,
-                            primaryGroupId: primaryGroupId ?? widget.groupId,
-                            onSwitchGroup: widget.onSwitchGroup,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
                     icon: const Icon(Icons.group_add),
                     tooltip: l10n.inviteTooltip,
                     onPressed: () => showDialog(
@@ -510,6 +490,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.settings_outlined),
+                    tooltip: l10n.settingsTooltip,
+                    onPressed: () async {
+                      final primaryGroupId = await UserService()
+                          .getPrimaryGroupId(widget.user.uid);
+                      if (!context.mounted) return;
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GroupSettingsScreen(
+                            user: widget.user,
+                            currentGroupId: widget.groupId,
+                            primaryGroupId: primaryGroupId ?? widget.groupId,
+                            onSwitchGroup: widget.onSwitchGroup,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(Icons.logout),

@@ -8,31 +8,36 @@
   <!-- Vertical stem -->
   <rect x="216" y="140" width="80" height="272" rx="36" fill="white"/>
 
-  <!-- Tilted crossbar — 12° clockwise around (256, 140)
-       Left pill center after rotation: (123, 168)  → lowest point (123, 208)
-       Right pill center after rotation: (389, 112) → lowest point (389, 152) -->
-  <rect x="80" y="100" width="352" height="80" rx="40" fill="white"
-        transform="rotate(12, 256, 140)"/>
+  <!-- Chain rects drawn BEFORE the crossbar.
+       Left  pill centre: (123, 168) → pill bottom (123, 208)
+       Right pill centre: (389, 112) → pill bottom (389, 152)
+       Rects start 30 px inside the crossbar to guarantee full coverage. -->
 
-  <!-- Left chain — from lowest point of left pill (123, 208) down to coin -->
-  <line x1="123" y1="208" x2="123" y2="258" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <!-- Left chain: x centred on 123, from y=178 to y=258 (coin top) -->
+  <rect x="117" y="178" width="12" height="80" fill="white"/>
 
-  <!-- Right chain — from lowest point of right pill (389, 152) down to bill -->
-  <line x1="389" y1="152" x2="389" y2="228" stroke="white" stroke-width="11" stroke-linecap="round"/>
+  <!-- Right chain: x centred on 389, from y=122 to y=228 (bill top) -->
+  <rect x="383" y="122" width="12" height="106" fill="white"/>
+
+  <!-- Crossbar as explicit pre-rotated path (12° CW around 256,140) — no transform.
+       Left  arc centre (123, 168), right arc centre (389, 112), radius 40.
+       Path: top-left → top-right → right arc → bottom-right → bottom-left → left arc → close -->
+  <path d="M 114.6555,129.1501
+           L 380.7116,72.5981
+           A 40 40 0 0 1 397.3445,150.8499
+           L 131.2884,207.4019
+           A 40 40 0 0 1 114.6555,129.1501 Z"
+        fill="white"/>
 
   <!-- Left coin (lower — heavier side) -->
   <circle cx="123" cy="306" r="48" fill="#E8B86D"/>
   <circle cx="123" cy="306" r="34" fill="none" stroke="white" stroke-width="5"/>
 
   <!-- Right banknote (higher — lighter side) -->
-  <!-- Outer bill: 92×58, centred on chain x=389 -->
-  <rect x="343" y="228" width="92" height="58" rx="9" fill="#E8B86D"/>
-  <!-- Inner border frame -->
-  <rect x="350" y="235" width="78" height="44" rx="6" fill="none" stroke="white" stroke-width="3.5"/>
-  <!-- Portrait oval (left zone) -->
-  <ellipse cx="369" cy="257" rx="12" ry="15" fill="none" stroke="white" stroke-width="3"/>
-  <!-- Value lines (right zone) -->
-  <line x1="389" y1="248" x2="425" y2="248" stroke="white" stroke-width="3" stroke-linecap="round"/>
-  <line x1="389" y1="257" x2="425" y2="257" stroke="white" stroke-width="3" stroke-linecap="round"/>
-  <line x1="389" y1="266" x2="425" y2="266" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <rect x="345" y="228" width="88" height="54" rx="9" fill="#E8B86D"/>
+  <rect x="352" y="235" width="74" height="40" rx="6" fill="none" stroke="white" stroke-width="3.5"/>
+  <ellipse cx="371" cy="255" rx="12" ry="15" fill="none" stroke="white" stroke-width="3"/>
+  <line x1="391" y1="246" x2="421" y2="246" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="391" y1="255" x2="421" y2="255" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  <line x1="391" y1="264" x2="421" y2="264" stroke="white" stroke-width="3" stroke-linecap="round"/>
 </svg>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Politique de confidentialité — Triflouze</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f7f9f7;
+      color: #1a2e20;
+      line-height: 1.7;
+    }
+    header {
+      background: #6B9E7A;
+      color: white;
+      padding: 40px 24px 32px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.85; }
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px;
+      background: #eaf3ec;
+      border-bottom: 1px solid #d0e5d6;
+    }
+    .lang-switch a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6B9E7A;
+      padding: 6px 18px;
+      border: 2px solid #6B9E7A;
+      border-radius: 20px;
+    }
+    .lang-switch a.active { background: #6B9E7A; color: white; }
+    main {
+      max-width: 780px;
+      margin: 40px auto;
+      padding: 0 24px 60px;
+    }
+    section { margin-bottom: 36px; }
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #4a7a57;
+      margin-bottom: 10px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid #d0e5d6;
+    }
+    p, li { font-size: 0.95rem; color: #2d3f32; }
+    ul { padding-left: 20px; margin-top: 6px; }
+    li { margin-bottom: 4px; }
+    a { color: #4a7a57; }
+    .updated {
+      font-size: 0.82rem;
+      color: #7a9a82;
+      text-align: center;
+      margin-top: 48px;
+    }
+
+    /* English section hidden by default */
+    #en { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Triflouze</h1>
+  <p>Politique de confidentialité · Privacy Policy</p>
+</header>
+
+<div class="lang-switch">
+  <a href="#" class="active" onclick="showLang('fr'); return false;">Français</a>
+  <a href="#" onclick="showLang('en'); return false;">English</a>
+</div>
+
+<main>
+
+  <!-- ═══════════════════════════ FRANÇAIS ═══════════════════════════ -->
+  <div id="fr">
+
+    <section>
+      <h2>1. Présentation</h2>
+      <p>Triflouze est une application mobile de gestion de dépenses partagées. La présente politique décrit les données que nous collectons, leur utilisation et vos droits.</p>
+    </section>
+
+    <section>
+      <h2>2. Données collectées</h2>
+      <ul>
+        <li><strong>Compte :</strong> adresse e-mail et nom d'affichage, fournis lors de l'inscription ou via Google Sign-In.</li>
+        <li><strong>Dépenses :</strong> titre, montant, devise, catégorie, date, membres concernés, commentaire et étiquettes que vous saisissez.</li>
+        <li><strong>Groupes :</strong> nom du groupe, code d'invitation, liste des membres.</li>
+        <li><strong>Notifications :</strong> jeton d'appareil (FCM) pour l'envoi de notifications push, si vous l'autorisez.</li>
+      </ul>
+      <p style="margin-top:10px">Nous ne collectons <strong>pas</strong> de données de localisation, de contacts téléphoniques ni d'informations de paiement.</p>
+    </section>
+
+    <section>
+      <h2>3. Utilisation des données</h2>
+      <p>Les données sont utilisées exclusivement pour :</p>
+      <ul>
+        <li>Vous authentifier et sécuriser votre compte.</li>
+        <li>Afficher et synchroniser les dépenses de votre groupe.</li>
+        <li>Vous envoyer des notifications lors de l'ajout d'une dépense par un membre du groupe.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Stockage et sécurité</h2>
+      <p>Vos données sont stockées sur <strong>Google Firebase</strong> (Firestore et Authentication), hébergé en Europe. Firebase applique un chiffrement en transit (TLS) et au repos. Les règles de sécurité Firestore garantissent qu'un utilisateur ne peut accéder qu'aux groupes dont il est membre.</p>
+    </section>
+
+    <section>
+      <h2>5. Partage des données</h2>
+      <p>Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers à des fins commerciales. Les données sont uniquement partagées avec les membres du même groupe, dans le cadre normal de l'application.</p>
+    </section>
+
+    <section>
+      <h2>6. Services tiers</h2>
+      <ul>
+        <li><strong>Google Firebase</strong> (Auth, Firestore, Cloud Messaging) — <a href="https://firebase.google.com/support/privacy" target="_blank">politique de confidentialité</a></li>
+        <li><strong>Google Sign-In</strong> — <a href="https://policies.google.com/privacy" target="_blank">politique de confidentialité Google</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Conservation des données</h2>
+      <p>Vos données sont conservées tant que votre compte existe. Vous pouvez demander la suppression de votre compte et de toutes vos données à tout moment.</p>
+    </section>
+
+    <section>
+      <h2>8. Vos droits</h2>
+      <p>Conformément au RGPD, vous disposez des droits d'accès, de rectification, de suppression et de portabilité de vos données. Pour exercer ces droits, contactez-nous à l'adresse ci-dessous.</p>
+    </section>
+
+    <section>
+      <h2>9. Contact</h2>
+      <p>Pour toute question relative à la confidentialité : <a href="mailto:contact@triflouze.app">contact@triflouze.app</a></p>
+    </section>
+
+  </div>
+
+  <!-- ═══════════════════════════ ENGLISH ═══════════════════════════ -->
+  <div id="en">
+
+    <section>
+      <h2>1. Overview</h2>
+      <p>Triflouze is a mobile app for managing shared expenses. This policy describes the data we collect, how we use it, and your rights.</p>
+    </section>
+
+    <section>
+      <h2>2. Data We Collect</h2>
+      <ul>
+        <li><strong>Account:</strong> email address and display name, provided at sign-up or via Google Sign-In.</li>
+        <li><strong>Expenses:</strong> title, amount, currency, category, date, members, comment, and tags you enter.</li>
+        <li><strong>Groups:</strong> group name, invite code, member list.</li>
+        <li><strong>Notifications:</strong> device token (FCM) for push notifications, if you grant permission.</li>
+      </ul>
+      <p style="margin-top:10px">We do <strong>not</strong> collect location data, phone contacts, or payment information.</p>
+    </section>
+
+    <section>
+      <h2>3. How We Use Your Data</h2>
+      <p>Data is used solely to:</p>
+      <ul>
+        <li>Authenticate and secure your account.</li>
+        <li>Display and sync your group's expenses.</li>
+        <li>Send you notifications when a group member adds an expense.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Storage &amp; Security</h2>
+      <p>Your data is stored on <strong>Google Firebase</strong> (Firestore and Authentication), hosted in Europe. Firebase encrypts data in transit (TLS) and at rest. Firestore security rules ensure users can only access groups they belong to.</p>
+    </section>
+
+    <section>
+      <h2>5. Data Sharing</h2>
+      <p>We do not sell, rent, or share your personal data with third parties for commercial purposes. Data is only shared with members of the same group as part of normal app functionality.</p>
+    </section>
+
+    <section>
+      <h2>6. Third-Party Services</h2>
+      <ul>
+        <li><strong>Google Firebase</strong> (Auth, Firestore, Cloud Messaging) — <a href="https://firebase.google.com/support/privacy" target="_blank">privacy policy</a></li>
+        <li><strong>Google Sign-In</strong> — <a href="https://policies.google.com/privacy" target="_blank">Google privacy policy</a></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Data Retention</h2>
+      <p>Your data is retained as long as your account exists. You may request deletion of your account and all associated data at any time.</p>
+    </section>
+
+    <section>
+      <h2>8. Your Rights</h2>
+      <p>Under GDPR, you have the right to access, correct, delete, and export your data. To exercise these rights, contact us at the address below.</p>
+    </section>
+
+    <section>
+      <h2>9. Contact</h2>
+      <p>Privacy inquiries: <a href="mailto:contact@triflouze.app">contact@triflouze.app</a></p>
+    </section>
+
+  </div>
+
+  <p class="updated">Dernière mise à jour · Last updated: March 2026</p>
+
+</main>
+
+<script>
+  function showLang(lang) {
+    document.getElementById('fr').style.display = lang === 'fr' ? 'block' : 'none';
+    document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
+    document.querySelectorAll('.lang-switch a').forEach((a, i) => {
+      a.classList.toggle('active', (i === 0 && lang === 'fr') || (i === 1 && lang === 'en'));
+    });
+  }
+</script>
+
+</body>
+</html>
