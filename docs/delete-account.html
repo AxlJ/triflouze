@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suppression du compte — Triflouze</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f7f9f7;
+      color: #1a2e20;
+      line-height: 1.7;
+    }
+    header {
+      background: #6B9E7A;
+      color: white;
+      padding: 40px 24px 32px;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+    header p  { font-size: 0.95rem; opacity: 0.85; }
+    .lang-switch {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 18px;
+      background: #eaf3ec;
+      border-bottom: 1px solid #d0e5d6;
+    }
+    .lang-switch a {
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #6B9E7A;
+      padding: 6px 18px;
+      border: 2px solid #6B9E7A;
+      border-radius: 20px;
+    }
+    .lang-switch a.active { background: #6B9E7A; color: white; }
+    main {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 24px 60px;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #4a7a57;
+      margin-bottom: 14px;
+    }
+    p { font-size: 0.95rem; color: #2d3f32; margin-bottom: 10px; }
+    ol, ul { padding-left: 20px; }
+    li { font-size: 0.95rem; color: #2d3f32; margin-bottom: 6px; }
+    .warning {
+      background: #fff8e6;
+      border-left: 4px solid #E8B86D;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      color: #7a5a1a;
+      margin-top: 14px;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 18px;
+      background: #c0392b;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 12px 28px;
+      border-radius: 10px;
+    }
+    .btn:hover { background: #a93226; }
+    #en { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Triflouze</h1>
+  <p>Suppression du compte · Account Deletion</p>
+</header>
+
+<div class="lang-switch">
+  <a href="#" class="active" onclick="showLang('fr'); return false;">Français</a>
+  <a href="#" onclick="showLang('en'); return false;">English</a>
+</div>
+
+<main>
+
+  <!-- ═══════════════════════════ FRANÇAIS ═══════════════════════════ -->
+  <div id="fr">
+
+    <div class="card">
+      <h2>Supprimer votre compte</h2>
+      <p>Vous pouvez demander la suppression de votre compte Triflouze et de toutes vos données associées à tout moment.</p>
+
+      <p><strong>Données supprimées :</strong></p>
+      <ul>
+        <li>Votre compte d'authentification (e-mail, nom d'affichage)</li>
+        <li>Vos dépenses dans tous les groupes</li>
+        <li>Vos préférences (groupe principal)</li>
+        <li>Votre token de notification</li>
+      </ul>
+
+      <p style="margin-top:12px"><strong>Données non supprimées :</strong></p>
+      <ul>
+        <li>Les dépenses que vous avez ajoutées restent visibles pour les autres membres du groupe (nom de la dépense uniquement, sans lien avec votre compte).</li>
+      </ul>
+
+      <div class="warning">
+        ⚠️ Cette action est irréversible. Toutes vos données personnelles seront définitivement supprimées dans un délai de 30 jours.
+      </div>
+
+      <a class="btn" href="mailto:contact@triflouze.app?subject=Suppression%20de%20compte&body=Bonjour%2C%0A%0AJe%20souhaite%20supprimer%20mon%20compte%20Triflouze%20et%20toutes%20les%20donn%C3%A9es%20associ%C3%A9es.%0A%0AAdresse%20e-mail%20du%20compte%20%3A%20">
+        Demander la suppression par e-mail
+      </a>
+    </div>
+
+    <div class="card">
+      <h2>Délai de traitement</h2>
+      <p>Votre demande sera traitée dans un délai maximum de <strong>30 jours</strong>. Vous recevrez une confirmation par e-mail une fois la suppression effectuée.</p>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════ ENGLISH ═══════════════════════════ -->
+  <div id="en">
+
+    <div class="card">
+      <h2>Delete your account</h2>
+      <p>You can request deletion of your Triflouze account and all associated data at any time.</p>
+
+      <p><strong>Data that will be deleted:</strong></p>
+      <ul>
+        <li>Your authentication account (email, display name)</li>
+        <li>Your expenses across all groups</li>
+        <li>Your preferences (primary group)</li>
+        <li>Your notification token</li>
+      </ul>
+
+      <p style="margin-top:12px"><strong>Data that will not be deleted:</strong></p>
+      <ul>
+        <li>Expenses you added remain visible to other group members (expense title only, no longer linked to your account).</li>
+      </ul>
+
+      <div class="warning">
+        ⚠️ This action is irreversible. All your personal data will be permanently deleted within 30 days.
+      </div>
+
+      <a class="btn" href="mailto:contact@triflouze.app?subject=Account%20Deletion%20Request&body=Hello%2C%0A%0AI%20would%20like%20to%20delete%20my%20Triflouze%20account%20and%20all%20associated%20data.%0A%0AAccount%20email%20address%3A%20">
+        Request deletion by email
+      </a>
+    </div>
+
+    <div class="card">
+      <h2>Processing time</h2>
+      <p>Your request will be processed within <strong>30 days</strong>. You will receive a confirmation email once deletion is complete.</p>
+    </div>
+
+  </div>
+
+</main>
+
+<script>
+  function showLang(lang) {
+    document.getElementById('fr').style.display = lang === 'fr' ? 'block' : 'none';
+    document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
+    document.querySelectorAll('.lang-switch a').forEach((a, i) => {
+      a.classList.toggle('active', (i === 0 && lang === 'fr') || (i === 1 && lang === 'en'));
+    });
+  }
+</script>
+
+</body>
+</html>
