@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/triflouze_theme.dart';
 
-/// Icône carrée arrondie Triflouze (trois membres + pièce centrale)
+/// Icône carrée arrondie Triflouze
 class TriflouzeIcon extends StatelessWidget {
   final double size;
 
@@ -9,10 +9,10 @@ class TriflouzeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Image.asset(
+      'assets/logo/icon.png',
       width: size,
       height: size,
-      child: CustomPaint(painter: _IconPainter()),
     );
   }
 }
@@ -82,70 +82,3 @@ class TriflouzeLogoVertical extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _IconPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final white = Paint()..color = Colors.white;
-
-    // Fond arrondi vert sauge
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, w, h),
-        Radius.circular(w * 0.219),
-      ),
-      Paint()..color = TriflouzeTheme.primary,
-    );
-
-    // Barre horizontale du T (pill)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.156, h * 0.195, w * 0.688, h * 0.156),
-        Radius.circular(h * 0.078),
-      ),
-      white,
-    );
-
-    // Tige verticale
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.422, h * 0.273, w * 0.156, h * 0.531),
-        Radius.circular(w * 0.070),
-      ),
-      white,
-    );
-
-    // Connecteurs (fils suspendus)
-    final connectorPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = w * 0.022
-      ..strokeCap = StrokeCap.round;
-    final connectorTop = h * 0.352;
-    final connectorBot = h * 0.445;
-    canvas.drawLine(
-        Offset(w * 0.234, connectorTop), Offset(w * 0.234, connectorBot), connectorPaint);
-    canvas.drawLine(
-        Offset(w * 0.766, connectorTop), Offset(w * 0.766, connectorBot), connectorPaint);
-
-    // Pièces d'or
-    final coinPaint = Paint()..color = TriflouzeTheme.accent;
-    final rimPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = w * 0.010;
-    final coinR = w * 0.094;
-    final rimR = w * 0.066;
-    final coinCy = h * 0.539;
-
-    for (final cx in [w * 0.234, w * 0.766]) {
-      canvas.drawCircle(Offset(cx, coinCy), coinR, coinPaint);
-      canvas.drawCircle(Offset(cx, coinCy), rimR, rimPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(_IconPainter old) => false;
-}
